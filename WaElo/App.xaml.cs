@@ -13,5 +13,12 @@ namespace WaElo
   /// </summary>
   public partial class App : Application
   {
+    private Model model;
+    public Model Model { get { return model; } }
+
+    private void Application_Startup(object sender, StartupEventArgs e)
+    {
+      model = FindResource("Model") as Model;
+    }
   }
 }

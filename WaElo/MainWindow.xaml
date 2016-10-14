@@ -5,8 +5,65 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WaElo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="{StaticResource strAppTitle}"
+        Height="350"
+        Width="525">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"></ColumnDefinition>
+      <ColumnDefinition Width="2*"></ColumnDefinition>
+    </Grid.ColumnDefinitions>
+    <ListView Grid.Column="0"
+              x:Name="lvwMain"
+              DataContext="{x:Static local:Config.Root}"
+              ItemsSource="{Binding Path=Elements[User]}">
+      <ListView.View>
+        <GridView>
+          <GridView.Columns>
+            <GridViewColumn Header="玩家"
+                            DisplayMemberBinding="{Binding Path=Element[Name].Value}">
+            </GridViewColumn>
+            <GridViewColumn Header="Elo 分数"
+                            DisplayMemberBinding="{Binding Path=Element[Elo].Value}"></GridViewColumn>
+          </GridView.Columns>
+        </GridView>
+      </ListView.View>
+    </ListView>
+    <StackPanel Grid.Column="1">
+      <Button Command="{x:Static local:Commands.AddUserCommand}"
+              CommandParameter="{Binding ElementName= tbxAddUser,Path=Text}">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="{StaticResource strAddUserPrompt}">
+          </TextBlock>
+          <TextBox x:Name="tbxAddUser"
+                   MinWidth="100"
+                   Margin="50,0,0,0"></TextBox>
+        </StackPanel>
+      </Button>
+      <Button Command="{x:Static local:Commands.SelectWinnerCommand}"
+              CommandParameter="{Binding ElementName=lvwMain,Path=SelectedItem}">----> 选择胜者</Button>
+      <Button Command="{x:Static local:Commands.SelectLoserCommand}"
+              CommandParameter="{Binding ElementName=lvwMain,Path=SelectedItem}">----> 选择负者</Button>
+      <TextBlock>
+        <TextBlock.Text>
+          <MultiBinding StringFormat="{}{0} 胜 {1}">
+            <Binding Source="{x:Static Application.Current}"
+                     Path="Model.Winner.Element[Name].Value"></Binding>
+            <Binding Source="{x:Static Application.Current}"
+                     Path="Model.Loser.Element[Name].Value"></Binding>
+          </MultiBinding>
+        </TextBlock.Text>
+      </TextBlock>
+      <TextBlock>
+        <TextBlock.Text>
+          <MultiBinding StringFormat="{}{0} {1}">
+            <Binding Source="{x:Static Application.Current}" Path="Model.Winner.Element[Elo].Value"></Binding>
+            <Binding Source="{x:Static Application.Current}"
+                     Path="Model.Loser.Element[Elo].Value"></Binding>
+          </MultiBinding>
+        </TextBlock.Text>
+      </TextBlock>
+      <Button Command="{x:Static local:Commands.SubmitResultCommand}">提交结果</Button>
+    </StackPanel>
+  </Grid>
 </Window>
