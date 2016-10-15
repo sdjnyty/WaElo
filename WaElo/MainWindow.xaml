@@ -7,63 +7,109 @@
         mc:Ignorable="d"
         Title="{StaticResource strAppTitle}"
         Height="350"
-        Width="525">
+        Width="690">
   <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto"></RowDefinition>
+      <RowDefinition Height="*"></RowDefinition>
+    </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"></ColumnDefinition>
-      <ColumnDefinition Width="2*"></ColumnDefinition>
+      <ColumnDefinition Width="*"></ColumnDefinition>
+      <ColumnDefinition Width="*"></ColumnDefinition>
     </Grid.ColumnDefinitions>
-    <ListView Grid.Column="0"
-              x:Name="lvwMain"
-              DataContext="{x:Static local:Config.Root}"
-              ItemsSource="{Binding Path=Elements[User]}">
+    <TextBlock Grid.Row="0"
+               Grid.Column="0">胜者选择</TextBlock>
+    <ListView Grid.Row="1"
+              Grid.Column="0"
+              x:Name="lvwWinner"
+              ItemsSource="{Binding Source={x:Static local:Config.Users}}"
+              SelectedItem="{Binding Source={StaticResource GlobalVars},Path=Winner,Mode=OneWayToSource}">
       <ListView.View>
         <GridView>
           <GridView.Columns>
             <GridViewColumn Header="玩家"
-                            DisplayMemberBinding="{Binding Path=Element[Name].Value}">
+                            DisplayMemberBinding="{Binding Path=Name}">
             </GridViewColumn>
             <GridViewColumn Header="Elo 分数"
-                            DisplayMemberBinding="{Binding Path=Element[Elo].Value}"></GridViewColumn>
+                            DisplayMemberBinding="{Binding Path=Elo,StringFormat={}{0:F0}}"></GridViewColumn>
+            <GridViewColumn Header="胜"
+                            Width="35"
+                            DisplayMemberBinding="{Binding Path=Win}"></GridViewColumn>
+            <GridViewColumn Header="负"
+                            Width="35"
+                            DisplayMemberBinding="{Binding Path=Lose}"></GridViewColumn>
           </GridView.Columns>
         </GridView>
       </ListView.View>
     </ListView>
-    <StackPanel Grid.Column="1">
+    <TextBlock Grid.Row="0"
+               Grid.Column="1">负者选择</TextBlock>
+    <ListView Grid.Row="1"
+              Grid.Column="1"
+              x:Name="lvwLoser"
+              ItemsSource="{Binding Source={x:Static local:Config.Users}}"
+              SelectedItem="{Binding Source={StaticResource GlobalVars},Path=Loser,Mode=OneWayToSource}">
+      <ListView.View>
+        <GridView>
+          <GridView.Columns>
+            <GridViewColumn Header="玩家"
+                            DisplayMemberBinding="{Binding Path=Name}">
+            </GridViewColumn>
+            <GridViewColumn Header="Elo 分数"
+                            DisplayMemberBinding="{Binding Path=Elo,StringFormat={}{0:F0}}"></GridViewColumn>
+            <GridViewColumn Header="胜"
+                            Width="35"
+                            DisplayMemberBinding="{Binding Path=Win}"></GridViewColumn>
+            <GridViewColumn Header="负"
+                            Width="35"
+                            DisplayMemberBinding="{Binding Path=Lose}"></GridViewColumn>
+          </GridView.Columns>
+        </GridView>
+      </ListView.View>
+    </ListView>
+    <StackPanel Grid.Row="1"
+                Grid.Column="2">
       <Button Command="{x:Static local:Commands.AddUserCommand}"
-              CommandParameter="{Binding ElementName= tbxAddUser,Path=Text}">
+              CommandParameter="{Binding ElementName= tbxAddUser,Path=Text,UpdateSourceTrigger=PropertyChanged}">
         <StackPanel Orientation="Horizontal">
           <TextBlock Text="{StaticResource strAddUserPrompt}">
           </TextBlock>
           <TextBox x:Name="tbxAddUser"
                    MinWidth="100"
-                   Margin="50,0,0,0"></TextBox>
+                   Margin="10,0,0,0"
+                   IsEnabled="True"></TextBox>
         </StackPanel>
       </Button>
-      <Button Command="{x:Static local:Commands.SelectWinnerCommand}"
-              CommandParameter="{Binding ElementName=lvwMain,Path=SelectedItem}">----> 选择胜者</Button>
-      <Button Command="{x:Static local:Commands.SelectLoserCommand}"
-              CommandParameter="{Binding ElementName=lvwMain,Path=SelectedItem}">----> 选择负者</Button>
-      <TextBlock>
+      <Button Command="{x:Static local:Commands.DeleteUserCommand}"
+              CommandParameter="{Binding ElementName=lvwWinner,Path=SelectedItem}"
+              ToolTip="使用【胜者选择】列表"
+              Content="{Binding Source={StaticResource GlobalVars},Path=Winner.Name}"
+              ContentStringFormat="删除玩家 {0}">
+      </Button>
+      <TextBlock HorizontalAlignment="Center">
         <TextBlock.Text>
           <MultiBinding StringFormat="{}{0} 胜 {1}">
-            <Binding Source="{x:Static Application.Current}"
-                     Path="Model.Winner.Element[Name].Value"></Binding>
-            <Binding Source="{x:Static Application.Current}"
-                     Path="Model.Loser.Element[Name].Value"></Binding>
+            <Binding Source="{x:Static local:GlobalVars.Instance}"
+                     Path="Winner.Name"></Binding>
+            <Binding Source="{x:Static local:GlobalVars.Instance}"
+                     Path="Loser.Name"></Binding>
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
-      <TextBlock>
+      <TextBlock HorizontalAlignment="Center">
         <TextBlock.Text>
-          <MultiBinding StringFormat="{}{0} {1}">
-            <Binding Source="{x:Static Application.Current}" Path="Model.Winner.Element[Elo].Value"></Binding>
-            <Binding Source="{x:Static Application.Current}"
-                     Path="Model.Loser.Element[Elo].Value"></Binding>
+          <MultiBinding xml:space="preserve" StringFormat="{}{0:F0}&#9;{1:F0}">
+            <Binding Source="{StaticResource GlobalVars}"
+                     Path="Winner.Elo"></Binding>
+            <Binding Source="{StaticResource GlobalVars}"
+                     Path="Loser.Elo"></Binding>
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
       <Button Command="{x:Static local:Commands.SubmitResultCommand}">提交结果</Button>
+      <Button Command="{x:Static local:Commands.UndoCommand}">撤销</Button>
+      <Button Command="{x:Static local:Commands.LastGameCommand}">从最新游戏录像获取信息</Button>
     </StackPanel>
   </Grid>
 </Window>

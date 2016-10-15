@@ -3,12 +3,13 @@
                     xmlns:local="clr-namespace:WaElo"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <sys:String x:Key="strAppTitle">给八云的 WA Elo 系统</sys:String>
-  <sys:String x:Key="strAddUserPrompt">添加用户</sys:String>
+  <sys:String x:Key="strAddUserPrompt">添加玩家</sys:String>
   <local:Model x:Key="Model"></local:Model>
+  <local:GlobalVars x:Key="GlobalVars"></local:GlobalVars>
   <Style TargetType="Button">
     <Style.Setters>
       <Setter Property="Margin" 
-              Value="50,10"></Setter>
+              Value="10"></Setter>
       <Setter Property="Padding"
               Value="5"></Setter>
     </Style.Setters>

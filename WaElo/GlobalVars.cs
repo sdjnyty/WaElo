@@ -1,12 +1,14 @@
-﻿using System.ComponentModel;
-using System.Xml.Linq;
+﻿using System.Windows;
+using Microsoft.Win32;
 
 namespace WaElo
 {
-  public class Model : INotifyPropertyChanged
+  public class GlobalVars : NotifyPropertyChangedBase
   {
+    public static GlobalVars Instance => Application.Current.FindResource("GlobalVars") as GlobalVars;
     private User winner;
     private User loser;
+    private string wAPath = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Team17SoftwareLTD\WormsArmageddon").GetValue("PATH") as string;
 
     public User Winner
     {
@@ -28,16 +30,6 @@ namespace WaElo
       }
     }
 
-    public Model()
-    {
-
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    private void OnPropertyChanged(string propertyName)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    public string WAPath => wAPath;
   }
 }

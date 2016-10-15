@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using System.IO;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace WaElo
 {
-  public static class Config
+  public class Config
   {
     private const string FILENAME = "waelo.xml";
 
     public static XElement Root { get; private set; }
+
+    public static ObservableCollection<User> Users { get; private set; }
 
     static Config()
     {
@@ -21,6 +20,7 @@ namespace WaElo
       else
         Root = new XElement("waelo");
       Root.Changed += (s, e) => Root.Save(FILENAME);
+      Users = new ObservableCollection<User>(Root.Elements(nameof(User)).Select(ele => new User(ele)));
     }
   }
 }
