@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace WaElo
 {
@@ -147,7 +148,7 @@ namespace WaElo
     public void Execute(object parameter)
     {
       var wAPath = GlobalVars.Instance.WAPath;
-      var file = new DirectoryInfo(Path.Combine(wAPath, @"User\Games")).GetFiles("*.WAgame").OrderByDescending(f => f.CreationTime).FirstOrDefault();
+      var file = new DirectoryInfo(Path.Combine(wAPath, @"User\Games")).GetFiles("*Online*.WAgame").OrderByDescending(f => f.CreationTime).FirstOrDefault();
       if (file == null)
       {
         MessageBox.Show("没有录像");
@@ -165,7 +166,7 @@ namespace WaElo
       //p.WaitForExit();
       using (var log = new WAgameLog(Path.ChangeExtension(file.FullName, "log")))
       {
-        Debug.WriteLine(log.Test);
+        MessageBox.Show(log.Teams.Aggregate(new StringBuilder(), (sb, t) => sb.AppendLine(t.ToString()), sb => sb.ToString()));
       }
     }
   }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Diagnostics;
 
 namespace WaElo
 {
@@ -10,17 +12,14 @@ namespace WaElo
   {
     private bool disposedValue = false;
     private StreamReader sr;
-    private string test;
-    private List<Ally> allies;
+    private List<Team> teams;
 
-    public string Test => test;
-
-    public List<Ally> Allies => allies;
+    public List<Team> Teams => teams;
 
     public WAgameLog(string fileName)
     {
-      allies = new List<Ally>();
-      sr = new StreamReader(fileName);
+      teams = new List<Team>();
+      sr = new StreamReader(fileName,Encoding.GetEncoding(1252));
       string line;
       Regex regex;
       for(;;)
@@ -29,7 +28,7 @@ namespace WaElo
         if (line == "")
           break;
       }
-      regex = new Regex(@"(\w+):\s*""(.+)"" as ""(.+)""");
+      regex = new Regex(@"^(\w+):\s+""(.+)""\s+as ""(.+)""");
       for(;;)
       {
         line = sr.ReadLine();
@@ -38,11 +37,34 @@ namespace WaElo
         else
         {
           var match = regex.Match(line);
-          var color = match.Groups[0].Value;
-          var ally = Allies.FirstOrDefault(t => t.Color == color);
-          if (ally == null)
-            allies.Add(new Ally(color));
-          
+          teams.Add(new Team(match.Groups[1].Value, match.Groups[3].Value, match.Groups[2].Value));
+        }
+      }
+      regex = new Regex(@"^\[\d{2}:\d{2}:\d{2}\.\d{2}\] (?:\[.+\] .+|•{3} (?:Damage dealt: (?<DMG>.+)$|resetting Jet Pack fuel use to \d+|Game Ends -|.+ \(.+\) .+)|\*{3} (?:(?<DROP>.+) disconnected due to (.+)$|.+ \((?<DROP>.+)\) forced out by disconnection of host))");
+      var dmgRegex = new Regex(@"\d+ (?:\((?<KILLS>\d) kill\) )?to (?<KILLED>.+) \(.+\)");
+      for(;;)
+      {
+        line = sr.ReadLine();
+        if (line == "")
+          break;
+        else
+        {
+          var match = regex.Match(line);
+          var dropGroup = match.Groups["DROP"];
+          if (dropGroup.Success)
+            teams.First(t => t.PlayerName == dropGroup.Value).Dropped = true;
+          var dmgGroup = match.Groups["DMG"];
+          if(dmgGroup.Success)
+          {
+            var damages = dmgGroup.Value.Split(new string[] { ", " }, StringSplitOptions.None);
+            foreach(var damage in damages)
+            {
+              var groups = dmgRegex.Match(damage).Groups;
+              var killsGroup = groups["KILLS"];
+              if (killsGroup.Success)
+                Teams.First(t => t.Name == groups["KILLED"].Value).Killed += int.Parse(killsGroup.Value);
+            }
+          }
         }
       }
     }
@@ -64,25 +86,30 @@ namespace WaElo
 
   }
 
-  public class Ally
+  public class Team
   {
     public string Color { get; set; }
 
-    public List<Player> Players { get; set; }
+    public string PlayerName { get; set; }
 
-    public Ally(string color)
+    public string Name { get; set; }
+
+    public int Killed { get; set; }
+
+    public bool Dropped { get; set; }
+
+    public Team(string color, string name,string playerName)
     {
       Color = color;
-      Players = new List<Player>();
+      Name = name;
+      PlayerName = playerName;
+      Killed = 0;
+      Dropped = false;
     }
-  }
 
-  public class Player
-  {
-    public string Machine { get; set; }
-    
-    public string Name { get; set; }
-    
-    public string TeamName { get; set; }
+    public override string ToString()
+    {
+      return $"{Color}\t{Name}\t{PlayerName}\t{Dropped}\t{Killed}";
+    }
   }
 }
