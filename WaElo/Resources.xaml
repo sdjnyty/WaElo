@@ -14,4 +14,10 @@
               Value="5"></Setter>
     </Style.Setters>
   </Style>
+  <Style TargetType="TextBlock">
+    <Style.Setters>
+      <Setter Property="HorizontalAlignment"
+              Value="Center"></Setter>
+    </Style.Setters>
+  </Style>
 </ResourceDictionary>

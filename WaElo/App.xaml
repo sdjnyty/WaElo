@@ -4,11 +4,11 @@
              xmlns:local="clr-namespace:WaElo"
              StartupUri="MainWindow.xaml"
              Startup="Application_Startup">
-    <Application.Resources>
+  <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Resources.xaml"></ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
-    </Application.Resources>
+  </Application.Resources>
 </Application>

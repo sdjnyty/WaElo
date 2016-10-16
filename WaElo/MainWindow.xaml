@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="{StaticResource strAppTitle}"
         Height="350"
-        Width="690">
+        Width="1200">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="auto"></RowDefinition>
@@ -17,6 +17,7 @@
       <ColumnDefinition Width="*"></ColumnDefinition>
       <ColumnDefinition Width="*"></ColumnDefinition>
       <ColumnDefinition Width="*"></ColumnDefinition>
+      <ColumnDefinition Width="2*"></ColumnDefinition>
     </Grid.ColumnDefinitions>
     <TextBlock Grid.Row="0"
                Grid.Column="0">胜者选择</TextBlock>
@@ -68,6 +69,8 @@
         </GridView>
       </ListView.View>
     </ListView>
+    <TextBlock Grid.Row="0"
+               Grid.Column="2">命令</TextBlock>
     <StackPanel Grid.Row="1"
                 Grid.Column="2">
       <Button Command="{x:Static local:Commands.AddUserCommand}"
@@ -87,7 +90,7 @@
               Content="{Binding Source={StaticResource GlobalVars},Path=Winner.Name}"
               ContentStringFormat="删除玩家 {0}">
       </Button>
-      <TextBlock HorizontalAlignment="Center">
+      <TextBlock>
         <TextBlock.Text>
           <MultiBinding StringFormat="{}{0} 胜 {1}">
             <Binding Source="{x:Static local:GlobalVars.Instance}"
@@ -97,9 +100,10 @@
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
-      <TextBlock HorizontalAlignment="Center">
+      <TextBlock>
         <TextBlock.Text>
-          <MultiBinding xml:space="preserve" StringFormat="{}{0:F0}&#9;{1:F0}">
+          <MultiBinding xml:space="preserve"
+                        StringFormat="{}{0:F0}&#9;{1:F0}">
             <Binding Source="{StaticResource GlobalVars}"
                      Path="Winner.Elo"></Binding>
             <Binding Source="{StaticResource GlobalVars}"
@@ -111,5 +115,39 @@
       <Button Command="{x:Static local:Commands.UndoCommand}">撤销</Button>
       <Button Command="{x:Static local:Commands.LastGameCommand}">从最新游戏录像获取信息</Button>
     </StackPanel>
+    <TextBlock Grid.Row="0"
+               Grid.Column="3">录像列表</TextBlock>
+    <ListBox Grid.Column="3"
+             Grid.Row="1"
+             VirtualizingStackPanel.IsVirtualizing="True"
+             VirtualizingStackPanel.VirtualizationMode="Recycling"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             ItemsSource="{Binding Source={x:Static Application.Current},Path=WAgames}">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <VirtualizingStackPanel></VirtualizingStackPanel>
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="auto"></RowDefinition>
+              <RowDefinition Height="auto"></RowDefinition>
+              <RowDefinition Height="auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"
+                       Text="{Binding Path=FileName}"></TextBlock>
+            <TextBlock Grid.Row="1"
+                       Text="{Binding Path=CreationTime}"></TextBlock>
+            <Image Grid.Row="2" Stretch="UniformToFill">
+              <Image.Source>
+                <BitmapImage UriSource="{Binding Path=Map}"></BitmapImage>
+              </Image.Source>
+            </Image>
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
   </Grid>
 </Window>

@@ -154,16 +154,6 @@ namespace WaElo
         MessageBox.Show("没有录像");
         return;
       }
-      //var p = new Process();
-      //p.StartInfo = new ProcessStartInfo
-      //{
-      //  FileName = Path.Combine(wAPath, "WA.exe"),
-      //  Arguments = $"/getlog \"{file.FullName}\"",
-      //  CreateNoWindow = true,
-      //  WindowStyle = ProcessWindowStyle.Hidden
-      //};
-      //p.Start();
-      //p.WaitForExit();
       using (var log = new WAgameLog(Path.ChangeExtension(file.FullName, "log")))
       {
         MessageBox.Show(log.Teams.Aggregate(new StringBuilder(), (sb, t) => sb.AppendLine(t.ToString()), sb => sb.ToString()));
