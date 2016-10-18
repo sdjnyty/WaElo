@@ -18,6 +18,8 @@ namespace WaElo
 
     public WAgameLog(string fileName)
     {
+      if (!File.Exists(fileName))
+        throw new ArgumentException("File not exists.");
       teams = new List<Team>();
       sr = new StreamReader(fileName,Encoding.GetEncoding(1252));
       string line;

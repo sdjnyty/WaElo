@@ -9,6 +9,7 @@ namespace WaElo
     private User winner;
     private User loser;
     private string wAPath = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Team17SoftwareLTD\WormsArmageddon").GetValue("PATH") as string;
+    private WAgameLog waGameLog;
 
     public User Winner
     {
@@ -31,5 +32,15 @@ namespace WaElo
     }
 
     public string WAPath => wAPath;
+
+    public WAgameLog WAGameLog
+    {
+      get { return waGameLog; }
+      set
+      {
+        waGameLog = value;
+        OnPropertyChanged(nameof(WAgameLog));
+      }
+    }
   }
 }

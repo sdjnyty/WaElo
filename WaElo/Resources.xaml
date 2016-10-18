@@ -6,6 +6,8 @@
   <sys:String x:Key="strAddUserPrompt">添加玩家</sys:String>
   <local:Model x:Key="Model"></local:Model>
   <local:GlobalVars x:Key="GlobalVars"></local:GlobalVars>
+  <BitmapImage x:Key="noMap"
+               UriSource="Resources/1.png"></BitmapImage>
   <Style TargetType="Button">
     <Style.Setters>
       <Setter Property="Margin" 
@@ -16,8 +18,6 @@
   </Style>
   <Style TargetType="TextBlock">
     <Style.Setters>
-      <Setter Property="HorizontalAlignment"
-              Value="Center"></Setter>
     </Style.Setters>
   </Style>
 </ResourceDictionary>

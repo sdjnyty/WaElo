@@ -138,26 +138,21 @@ namespace WaElo
 
   public class LastGameCommand : ICommand
   {
-    public event EventHandler CanExecuteChanged;
+    public event EventHandler CanExecuteChanged
+    {
+      add { CommandManager.RequerySuggested += value; }
+      remove { CommandManager.RequerySuggested -= value; }
+    }
 
     public bool CanExecute(object parameter)
     {
-      return true;
+      return parameter != null;
     }
 
     public void Execute(object parameter)
     {
-      var wAPath = GlobalVars.Instance.WAPath;
-      var file = new DirectoryInfo(Path.Combine(wAPath, @"User\Games")).GetFiles("*Online*.WAgame").OrderByDescending(f => f.CreationTime).FirstOrDefault();
-      if (file == null)
-      {
-        MessageBox.Show("没有录像");
-        return;
-      }
-      using (var log = new WAgameLog(Path.ChangeExtension(file.FullName, "log")))
-      {
-        MessageBox.Show(log.Teams.Aggregate(new StringBuilder(), (sb, t) => sb.AppendLine(t.ToString()), sb => sb.ToString()));
-      }
+      var wagame = parameter as WAgame;
+      GlobalVars.Instance.WAGameLog = wagame.GetLog();
     }
   }
 }

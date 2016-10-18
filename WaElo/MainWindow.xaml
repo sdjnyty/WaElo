@@ -6,18 +6,19 @@
         xmlns:local="clr-namespace:WaElo"
         mc:Ignorable="d"
         Title="{StaticResource strAppTitle}"
-        Height="350"
+        MinHeight="600"
         Width="1200">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="auto"></RowDefinition>
+      <RowDefinition Height="*"></RowDefinition>
       <RowDefinition Height="*"></RowDefinition>
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"></ColumnDefinition>
       <ColumnDefinition Width="*"></ColumnDefinition>
       <ColumnDefinition Width="*"></ColumnDefinition>
-      <ColumnDefinition Width="2*"></ColumnDefinition>
+      <ColumnDefinition Width="*"></ColumnDefinition>
     </Grid.ColumnDefinitions>
     <TextBlock Grid.Row="0"
                Grid.Column="0">胜者选择</TextBlock>
@@ -113,41 +114,60 @@
       </TextBlock>
       <Button Command="{x:Static local:Commands.SubmitResultCommand}">提交结果</Button>
       <Button Command="{x:Static local:Commands.UndoCommand}">撤销</Button>
-      <Button Command="{x:Static local:Commands.LastGameCommand}">从最新游戏录像获取信息</Button>
+      <Button Command="{x:Static local:Commands.LastGameCommand}"
+              CommandParameter="{Binding ElementName=lbxReplays,Path=SelectedItem}">从游戏录像获取信息</Button>
     </StackPanel>
     <TextBlock Grid.Row="0"
                Grid.Column="3">录像列表</TextBlock>
     <ListBox Grid.Column="3"
              Grid.Row="1"
-             VirtualizingStackPanel.IsVirtualizing="True"
-             VirtualizingStackPanel.VirtualizationMode="Recycling"
+             x:Name="lbxReplays"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
              ItemsSource="{Binding Source={x:Static Application.Current},Path=WAgames}">
-      <ListBox.ItemsPanel>
-        <ItemsPanelTemplate>
-          <VirtualizingStackPanel></VirtualizingStackPanel>
-        </ItemsPanelTemplate>
-      </ListBox.ItemsPanel>
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="auto"></RowDefinition>
-              <RowDefinition Height="auto"></RowDefinition>
-              <RowDefinition Height="auto"></RowDefinition>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0"
-                       Text="{Binding Path=FileName}"></TextBlock>
-            <TextBlock Grid.Row="1"
-                       Text="{Binding Path=CreationTime}"></TextBlock>
-            <Image Grid.Row="2" Stretch="UniformToFill">
-              <Image.Source>
-                <BitmapImage UriSource="{Binding Path=Map}"></BitmapImage>
-              </Image.Source>
-            </Image>
-          </Grid>
+          <Border BorderBrush="LightBlue"
+                  BorderThickness="0,0,0,1">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+              </Grid.RowDefinitions>
+              <TextBlock Grid.Row="0"
+                         Text="{Binding Path=FileName}"
+                         TextWrapping="Wrap"></TextBlock>
+              <TextBlock Grid.Row="1"
+                         Text="{Binding Path=CreationTime}"
+                         Foreground="Gray"></TextBlock>
+            </Grid>
+          </Border>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
+    <Image Grid.Row="2"
+           Grid.Column="0"
+           Grid.ColumnSpan="3"
+           Stretch="Fill"
+           Source="{Binding ElementName=lbxReplays,Path=SelectedItem,Converter={x:Static local:Converters.WAgameToBitmapImageConverter}}">
+    </Image>
+    <ListView Grid.Row="2"
+              Grid.Column="3"
+              ItemsSource="{Binding Source={x:Static local:GlobalVars.Instance},Path=WAGameLog.Teams}">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="队伍颜色"
+                          DisplayMemberBinding="{Binding Path=Color}"></GridViewColumn>
+          <GridViewColumn Header="队伍名称"
+                          DisplayMemberBinding="{Binding Path=Name}"></GridViewColumn>
+          <GridViewColumn Header="玩家名称"
+                          DisplayMemberBinding="{Binding Path=PlayerName}"></GridViewColumn>
+          <GridViewColumn Header="是否掉线"
+                          DisplayMemberBinding="{Binding Path=Dropped}"></GridViewColumn>
+          <GridViewColumn Header="死亡虫子数量"
+                          DisplayMemberBinding="{Binding Path=Killed}"></GridViewColumn>
+        </GridView>
+      </ListView.View>
+    </ListView>
   </Grid>
 </Window>
