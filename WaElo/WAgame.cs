@@ -8,9 +8,12 @@ using System.Drawing;
 
 namespace WaElo
 {
-  public class WAgame
+  public class WAgame:IDisposable
   {
+    private bool disposedValue = false;
     private string fullFileName;
+    private BinaryReader br;
+    private Lazy<WAgameMapType> mapType;
 
     public string FullFileName { get { return fullFileName; } }
 
@@ -18,10 +21,15 @@ namespace WaElo
 
     public DateTime CreationTime { get; }
 
+    public WAgameMapType MapType { get; }
+
+    public byte[] Map { get; }
+
     public WAgame(string fileName)
     {
       fullFileName = fileName;
-      CreationTime = new FileInfo(fileName).CreationTime;
+      CreationTime = new FileInfo(fullFileName).CreationTime;
+      br = new BinaryReader(new FileStream(fullFileName, FileMode.Open, FileAccess.Read, FileShare.Read));
     }
 
     public WAgameLog GetLog()
@@ -38,5 +46,29 @@ namespace WaElo
       p.WaitForExit();
       return new WAgameLog(Path.ChangeExtension(fullFileName, "log"));
     }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!disposedValue)
+      {
+        if (disposing)
+        {
+          br.Close();
+        }
+        disposedValue = true;
+      }
+    }
+
+    public void Dispose()
+    {
+      Dispose(true);
+    }
+  }
+
+  public enum WAgameMapType
+  {
+    Monochrome,
+    Seeded,
+    Colored
   }
 }
